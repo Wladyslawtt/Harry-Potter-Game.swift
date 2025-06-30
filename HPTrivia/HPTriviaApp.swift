@@ -19,12 +19,12 @@ struct HPTriviaApp: App {
 
 /**
  App Development Plan:
- - Game inro screen
+ 🟪 Game inro screen
  - GamePlay screen
  - Game logic (questions, scores, etc)
  - Celebration
- - Audio
- - Animations
+ 🟪 Audio
+ 🟪 Animations
  - In-App purchases
  - Store
  🟪 Instructions screen

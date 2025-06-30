@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import AVKit //זה פלאגין שיאפשר להוסיף מוזיקה
 
 struct ContentView: View {
+    @State private var audioPlayer: AVAudioPlayer!//הוספנו משתנה לשימוש במוזיקה
     @State private var animateViewsIn = false //יצרנו משתנה כבוי לאנימציה
     
     var body: some View {
@@ -53,9 +55,23 @@ struct ContentView: View {
             .frame(width: geo.size.width, height: geo.size.height)
         }
         .ignoresSafeArea()
-        .onAppear { //כאן אנו מפעילים את המשתנה שהגדרנו למעלה
-                animateViewsIn = true
+        .onAppear { //כאן אנו מגדירים מה יקרה כשנפתח את האפליקציה
+            animateViewsIn = true//כאן אנו מפעילים את משתנה האנימציה שהגדרנו למעלה
+            playAudio() //כאן הגדרנו להפעיל את הפונקציה להשמעת שיר
         }
+    }
+    
+    private func playAudio() {//פונקציה לניגון מוזיקה
+        //כאן הגדרנו מאיזה קובץ ומה השם שלו
+        let sound = Bundle.main.path(forResource: "magic-in-the-air", ofType: "mp3")
+        //כאן הגדרנו את המשתנה שיצרנו למעלה שינסה ליצור נגן קול עם כותבת לקובץ מהנתיב
+        //הסאונד עם סימן הקריאה הוא משתנה עם הנתיב לקובץ הקול
+        audioPlayer = try! AVAudioPlayer(contentsOf: URL(filePath: sound!))
+        //זה אומר כמה פעמים אנו רוצים הוא יתנגן מינוס אחד אומר לנצח
+        audioPlayer.numberOfLoops = -1
+        //השורה מבצעת את הפונקציה
+        audioPlayer.play()
+        
     }
 }
 
