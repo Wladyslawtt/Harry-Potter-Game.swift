@@ -19,7 +19,7 @@ struct ContentView: View {
     var body: some View {
         //גאו מתאים את האפליקציה לגודל המסך
         GeometryReader { geo in
-            ZStack {
+            ZStack { //תצוגת הלוגו שלנו
                 Image(.hogwarts)
                     .resizable()
                     .frame(width: geo.size.width * 3, height: geo.size.height)
@@ -55,10 +55,32 @@ struct ContentView: View {
                     
                     Spacer()
                     
-                    Spacer()
+                    VStack { //תצוגת לוח התוצאות שלנו
+                        if animateViewsIn {
+                            VStack {//לוח תוצאות
+                                Text("Recent Scores")
+                                    .font(.title2)
+                                
+                                Text("33")
+                                Text("27")
+                                Text("15")
+                            }
+                            .font(.title3)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal)
+                            .background(.black.opacity(0.7))
+                            .clipShape(.rect(cornerRadius: 20))
+                            //זה אפקט שמעלים ומראה לנו אותו
+                            .transition(.opacity)
+                        }
+                    }
+                    .animation(.linear(duration: 1).delay(4), value: animateViewsIn)//זו האנימציה עצמה
+                        
                     
                     Spacer()
-                    HStack {
+                    
+                    HStack { //תצוגת כל הכפתורים שלנו
+                        
                         Spacer()
                         
                         VStack {//זה כדי שנוכל להוסיף תצוגה לכל מה שזה עוטף
