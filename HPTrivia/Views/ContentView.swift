@@ -11,6 +11,7 @@ import AVKit //זה פלאגין שיאפשר להוסיף מוזיקה
 struct ContentView: View {
     @State private var audioPlayer: AVAudioPlayer!//הוספנו משתנה לשימוש במוזיקה
     @State private var animateViewsIn = false //יצרנו משתנה כבוי לאנימציה
+    @State private var scalePlayButton = false //יצרנו משתנה כבוי לכפתור
     
     var body: some View {
         //גאו מתאים את האפליקציה לגודל המסך
@@ -44,9 +45,46 @@ struct ContentView: View {
                             }
                             .padding(.top, 70)
                             .transition(.move(edge: .top))
+                            //זו אנימציה שכאילו הוא מוריד את הלוגו
                         }//זה הסוג של האנימציה שאנו רוצים
                     }
                     .animation(.easeInOut(duration: 0.7).delay(2), value: animateViewsIn)//זו האנימציה עצמה
+                    
+                    Spacer()
+                    
+                    Spacer()
+                    
+                    Spacer()
+                    //כפתור להתחלת משחק
+                    VStack {//זה כדי שנוכל להוסיף תצוגה לכל מה שזה עוטף
+                        if animateViewsIn {//אם האנימייט טרו אז לבצע
+                            Button {
+                                //Play the game
+                            } label: {
+                                Text("Play")
+                                    .font(.largeTitle)
+                                    .foregroundStyle(.white)
+                                    .padding(.vertical, 7)
+                                    .padding(.horizontal, 50)
+                                    .background(.brown)
+                                    .clipShape(.rect(cornerRadius: 20))
+                                    .shadow(radius: 5)
+                                //אם המשתנה דלוק האפקט יהיה אחד שתיים אם לא אז אחד
+                                    .scaleEffect(scalePlayButton ? 1.2 : 1)
+                                //הפעלת האנימציה בעת פתיחת היישום
+                                    .onAppear {
+                                        //הגדרנו שהאנימציה תהיה גדילה והקטנה לאחד שלוש שניות לתמיד
+                                        withAnimation(.easeInOut(duration: 1.3).repeatForever()) {
+                                            scalePlayButton.toggle()
+                                        }
+                                    }
+                            }
+                            //זו אנימציה כאילו הוא מעלה את הכפתור
+                            .transition(.offset(y: geo.size.height/3))
+                        }
+                    }
+                    .animation(.easeInOut(duration: 0.7).delay(2), value: animateViewsIn)//זו האנימציה עצמה
+                 
                     
                     Spacer()
                 }
@@ -57,7 +95,7 @@ struct ContentView: View {
         .ignoresSafeArea()
         .onAppear { //כאן אנו מגדירים מה יקרה כשנפתח את האפליקציה
             animateViewsIn = true//כאן אנו מפעילים את משתנה האנימציה שהגדרנו למעלה
-            playAudio() //כאן הגדרנו להפעיל את הפונקציה להשמעת שיר
+            //playAudio() //כאן הגדרנו להפעיל את הפונקציה להשמעת שיר
         }
     }
     
