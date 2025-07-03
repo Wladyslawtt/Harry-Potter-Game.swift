@@ -12,8 +12,8 @@ struct Book: Identifiable{
     let questions: [Question]
     var status: BookStatus //יצרנו משתנה שיכול לשנות את המצב שלו עם הטיפוס בוקסטטוס
     
-    
-    enum BookStatus {//כאן הגדרנו איזה מצבים יכולים להיות בטיפוס הזה
-        case active, inactive, locked
-    }
+}
+//בעיקרון הגדרנו אפשרויות איך הספרים יהיו למשתמש נעולים פתוחים או לא מושלמים
+enum BookStatus {//כאן הגדרנו איזה מצבים יכולים להיות בטיפוס הזה
+    case active, inactive, locked
 }

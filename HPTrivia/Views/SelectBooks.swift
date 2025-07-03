@@ -13,6 +13,9 @@ struct SelectBooks: View {
     //השורה הזו נותנת לנו גישה לאובייקט גיים שהוגדר בסביבת אב
     @Environment(Game.self) private var game
     
+    //הוספנו משתנה כבוי להתרעה זמנית
+    @State private var showTempAlert = false
+    
     var body: some View {
         ZStack{
             Image(.parchment)
@@ -47,14 +50,33 @@ struct SelectBooks: View {
                                         .shadow(radius: 1)
                                         .padding(3)
                                 }
+                                .onTapGesture {//בזמן הלחיצה הספר משנה את הסטטוס ללא פעיל
+                                    game.bookQuestions.changestatus(of: book.id, to: .inactive)
+                                }
+                                
                               //אם הסטטוס של כל ספר לא פעיל
                             } else if book.status == .inactive {
-                                ZStack {//מראה את כל הספרים הסגורים
+                                ZStack(alignment: .bottomTrailing) {//מראה את כל הספרים הסגורים
                                     Image(book.image)
                                         .resizable()
                                         .scaledToFit()
                                         .shadow(radius: 7)
+                                        .overlay {
+                                            Rectangle().opacity(0.33)
+                                        }
+                                    
+                                    //הוספנו עיגול ריק שיראה מה סגור
+                                    Image(systemName: "circle")
+                                        .font(.largeTitle)
+                                        .imageScale(.large)
+                                        .foregroundStyle(.green.opacity(0.5))
+                                        .shadow(radius: 1)
+                                        .padding(3)
                                 }
+                                .onTapGesture {//בזמן הלחיצה הספר משנה את הסטטוס לפעיל
+                                    game.bookQuestions.changestatus(of: book.id, to: .active)
+                                }
+                                
                               //אחר
                             } else {
                                 ZStack {//מראה את שאר הספרים
@@ -62,6 +84,21 @@ struct SelectBooks: View {
                                         .resizable()
                                         .scaledToFit()
                                         .shadow(radius: 7)
+                                        .overlay {
+                                            Rectangle().opacity(0.75)
+                                        }
+                                    
+                                    //הוספנו מנעול שיראה מה נעול
+                                    Image(systemName: "lock.fill")
+                                        .font(.largeTitle)
+                                        .imageScale(.large)
+                                        .shadow(color: .white,radius: 2)
+                                        .padding(3)
+                                }
+                                .onTapGesture {
+                                    showTempAlert.toggle()
+                                    //בזמן הלחיצה הספר משנה את הסטטוס לפעיל
+                                    game.bookQuestions.changestatus(of: book.id, to: .active)
                                 }
                             }
                         }
@@ -81,6 +118,9 @@ struct SelectBooks: View {
                 .foregroundStyle(.white)
             }
             .foregroundStyle(.black)
+        }
+        //הגדרנו התרעה בעת רכישה
+        .alert("You purchased a new question pack", isPresented: $showTempAlert) {
         }
     }
 }

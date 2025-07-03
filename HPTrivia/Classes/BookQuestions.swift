@@ -68,4 +68,11 @@ class BookQuestions { //הגדרנו מחלקה של שאלות מספרים
         books.append(Book(id: 6, image: "hp6", questions: questions[6], status: .locked))
         books.append(Book(id: 7, image: "hp7", questions: questions[7], status: .locked))
     }
+    
+    //היא פונקציה שמשנה את הסטטוס של ספר בתוך מערך ספרים לפי מספר מזהה
+    func changestatus(of id: Int, to status: BookStatus) {
+        //ניגש לספר במיקום מינוס אחד במערך ספרים ומשנה לו את הסטטוס
+        //שמנו מינוס אחד כי המספר מתחיל מאפס כשהספר מתחיל באחד
+        books[id-1].status = status
+    }
 }
