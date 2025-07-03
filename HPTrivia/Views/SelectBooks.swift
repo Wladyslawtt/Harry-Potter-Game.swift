@@ -16,6 +16,20 @@ struct SelectBooks: View {
     //הוספנו משתנה כבוי להתרעה זמנית
     @State private var showTempAlert = false
     
+    //המטרה היא שיהיה לפחות ספר אחד פתוח לשחק בו
+    //זו פונקציה שבודקת אם יש לפחות ספר אחד פעיל
+    var activeBooks: Bool {
+        //זו לולאה שרצה על כל ספר שנמצא במשחק שאלות הספרים
+        for book in game.bookQuestions.books {
+            if book.status == .active {
+                //אם נמצא לפחות אחד פעיל הוא יחזיר טרו
+                return true
+            }
+        }
+        //אם לא נמצא שום ספר הוא יחזיר פולס
+        return false
+    }
+    
     var body: some View {
         ZStack{
             Image(.parchment)
@@ -36,76 +50,41 @@ struct SelectBooks: View {
                         ForEach(game.bookQuestions.books) { book in
                             //אם הסטטוס של כל ספר פעיל
                             if book.status == .active {
-                                ZStack(alignment: .bottomTrailing) {//מראה את כל הספרים הפתוחים
-                                    Image(book.image)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .shadow(radius: 7)
-                                    
-                                    //הוספנו וי שיראה מה פתוח
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .font(.largeTitle)
-                                        .imageScale(.large)
-                                        .foregroundStyle(.green)
-                                        .shadow(radius: 1)
-                                        .padding(3)
-                                }
-                                .onTapGesture {//בזמן הלחיצה הספר משנה את הסטטוס ללא פעיל
-                                    game.bookQuestions.changestatus(of: book.id, to: .inactive)
-                                }
+                                ActiveBook(book: book)
+                                
+                                    .onTapGesture {//בזמן הלחיצה הספר משנה את הסטטוס ללא פעיל
+                                        game.bookQuestions.changestatus(of: book.id, to: .inactive)
+                                    }
                                 
                               //אם הסטטוס של כל ספר לא פעיל
                             } else if book.status == .inactive {
-                                ZStack(alignment: .bottomTrailing) {//מראה את כל הספרים הסגורים
-                                    Image(book.image)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .shadow(radius: 7)
-                                        .overlay {
-                                            Rectangle().opacity(0.33)
-                                        }
-                                    
-                                    //הוספנו עיגול ריק שיראה מה סגור
-                                    Image(systemName: "circle")
-                                        .font(.largeTitle)
-                                        .imageScale(.large)
-                                        .foregroundStyle(.green.opacity(0.5))
-                                        .shadow(radius: 1)
-                                        .padding(3)
-                                }
-                                .onTapGesture {//בזמן הלחיצה הספר משנה את הסטטוס לפעיל
-                                    game.bookQuestions.changestatus(of: book.id, to: .active)
+                                InactiveBook(book: book)
+                                
+                                    .onTapGesture {//בזמן הלחיצה הספר משנה את הסטטוס לפעיל
+                                        game.bookQuestions.changestatus(of: book.id, to: .active)
                                 }
                                 
                               //אחר
                             } else {
-                                ZStack {//מראה את שאר הספרים
-                                    Image(book.image)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .shadow(radius: 7)
-                                        .overlay {
-                                            Rectangle().opacity(0.75)
-                                        }
-                                    
-                                    //הוספנו מנעול שיראה מה נעול
-                                    Image(systemName: "lock.fill")
-                                        .font(.largeTitle)
-                                        .imageScale(.large)
-                                        .shadow(color: .white,radius: 2)
-                                        .padding(3)
-                                }
-                                .onTapGesture {
-                                    showTempAlert.toggle()
-                                    //בזמן הלחיצה הספר משנה את הסטטוס לפעיל
-                                    game.bookQuestions.changestatus(of: book.id, to: .active)
+                                LockedBook(book: book)
+                                
+                                    .onTapGesture {
+                                        showTempAlert.toggle()
+                                        //בזמן הלחיצה הספר משנה את הסטטוס לפעיל
+                                        game.bookQuestions.changestatus(of: book.id, to: .active)
                                 }
                             }
                         }
                     }
                     .padding()
                 }
-                
+                //אם לא נמצא ספר פעיל אז תציג הודעת טקסט
+                //הסימן קריאה לפני מילה מסמל שלילה פולס
+                //בלי סימן קריאה זה מסמל טרו זאת אומרת אם כן
+                if !activeBooks {
+                    Text("You must select at least one book")
+                        .multilineTextAlignment(.center)
+                }
                 
                 //יצרנו כפתור שיהיה אפשר לסגור את החלון
                 Button("Done") {
@@ -116,9 +95,12 @@ struct SelectBooks: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.brown.mix(with: .black, by: 0.2))
                 .foregroundStyle(.white)
+                .disabled(!activeBooks)//אם אין ספרים פעילים אז הוא משבית את הכפתור
             }
             .foregroundStyle(.black)
         }
+        //אם אין ספרים פעילים אז התצוגה לא תיסגר
+        .interactiveDismissDisabled(!activeBooks)
         //הגדרנו התרעה בעת רכישה
         .alert("You purchased a new question pack", isPresented: $showTempAlert) {
         }

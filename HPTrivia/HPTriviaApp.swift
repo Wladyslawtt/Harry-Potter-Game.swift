@@ -32,7 +32,7 @@ struct HPTriviaApp: App {
  - In-App purchases
  - Store
  ✅ Instructions screen 
- - Books
+ 🟦 Books
  - Persist scores
  
  ✅
