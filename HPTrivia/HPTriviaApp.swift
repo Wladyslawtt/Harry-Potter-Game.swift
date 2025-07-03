@@ -4,14 +4,18 @@
 //
 //  Created by Vladyslav Tarabunin on 29/06/2025.
 //
-
+//זו סביבת אב 
 import SwiftUI
 
 @main
 struct HPTriviaApp: App {
+    //הוספנו את התצוגה של המשחק עצמו
+    private var game = Game()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(game) //ופה הגדרנו שיהיה אפשר לגשת לתצוגה של המשחק מכל תצוגה ביישום
         }
     }
 }
@@ -27,7 +31,7 @@ struct HPTriviaApp: App {
  🟪 Animations
  - In-App purchases
  - Store
- ✅ Instructions screen
+ ✅ Instructions screen 
  - Books
  - Persist scores
  

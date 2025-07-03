@@ -62,6 +62,7 @@ struct ContentView: View {
     }
 }
 
-#Preview {
+#Preview {//הוספנו סביבת משחק למסך הראשי
     ContentView()
+        .environment(Game())
 }

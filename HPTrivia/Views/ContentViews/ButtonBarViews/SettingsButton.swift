@@ -34,12 +34,17 @@ struct SettingsButton: View {
             }
         }
         .animation(.easeInOut(duration: 0.7).delay(2), value: animateViewsIn)//זו האנימציה עצמה
-       
+        //הגדרנו חלון קופץ לכפתור ההגדרות ואם הוא טרו
+        .sheet(isPresented: $showSettings) {
+            //הוא יקפיץ חלונית לבחירת ספר
+            SelectBooks()
+        }
     }
 }
 
 #Preview {
     GeometryReader { geo in
         SettingsButton(animateViewsIn: .constant(true), geo: geo)
+            .environment(Game())
     }
 }
