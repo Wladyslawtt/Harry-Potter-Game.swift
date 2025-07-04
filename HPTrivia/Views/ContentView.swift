@@ -11,6 +11,7 @@ import AVKit //זה פלאגין שיאפשר להוסיף מוזיקה
 struct ContentView: View {
     @State private var audioPlayer: AVAudioPlayer!//הוספנו משתנה לשימוש במוזיקה
     @State private var animateViewsIn = false //יצרנו משתנה כבוי לאנימצית תצוגה
+    @State private var playGame = false //יצרנו משתנה כבוי לכפתור משחק
 
     var body: some View {
         //גאו מתאים את האפליקציה לגודל המסך
@@ -30,7 +31,7 @@ struct ContentView: View {
                     
                     Spacer()
                     //הדולר משתמש במשתנה המקור וגאו משתמש בגאו רידר
-                    ButtonBar(animateViewsIn: $animateViewsIn, geo: geo)
+                    ButtonBar(animateViewsIn: $animateViewsIn, playGame: $playGame, geo: geo)
                     
                     Spacer()
                 }
@@ -43,7 +44,17 @@ struct ContentView: View {
         .onAppear { //כאן אנו מגדירים מה יקרה כשנפתח את האפליקציה
             //כאן הפעלנו את המשתנה על כל התצוגה
             animateViewsIn = true//כאן אנו מפעילים את משתנה האנימציה שהגדרנו למעלה
-            //playAudio() //כאן הגדרנו להפעיל את הפונקציה להשמעת שיר
+            playAudio() //כאן הגדרנו להפעיל את הפונקציה להשמעת שיר
+        }
+        //זה מעביר למסך חדש למסך של המשחק הדולר הוא סימן למקור
+        .fullScreenCover(isPresented: $playGame) {
+            Gameplay()
+                .onAppear{//הגדרנו שהמוזיקה תיעלם בפתיחת חלון חדש
+                    audioPlayer.setVolume(0, fadeDuration: 2)
+                }
+                .onDisappear{//כשהחלון נסגר יש להחזיר מוזיקה
+                    audioPlayer.setVolume(1, fadeDuration: 3)
+                }
         }
         
     }
@@ -57,7 +68,7 @@ struct ContentView: View {
         //זה אומר כמה פעמים אנו רוצים הוא יתנגן מינוס אחד אומר לנצח
         audioPlayer.numberOfLoops = -1
         //השורה מבצעת את הפונקציה
-        audioPlayer.play()
+//        audioPlayer.play()
         
     }
 }

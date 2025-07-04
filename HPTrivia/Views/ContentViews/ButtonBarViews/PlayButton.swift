@@ -10,12 +10,13 @@ import SwiftUI
 struct PlayButton: View {
     //יצרנו משתנה כבוי לאנימצית כפתור משחק
     @State private var scalePlayButton = false
-    //יצרנו משתנה כבוי לכפתור משחק
-    @State private var playGame = false
+
     //יבאנו משתנה אנימייט מהמסך הראשי הגדרנו אותו בול
     //בול אומר זה יהיה או טרו או פולס
     //ביינדינג לוקח משתנה מהמסך הראשי שניתן לשינוי ומשנה אותו כאן לפי הצורך
     @Binding var animateViewsIn: Bool
+    //יצרנו משתנה כבוי לכפתור משחק
+    @Binding var playGame: Bool
     //עשינו זאת כי במסך הראשי הוא נמצא בתוך גאו רידר
     let geo: GeometryProxy //יבאנו גאו פרוטוקול כדי שיתאים את הכפתור לגודל המסך
  
@@ -55,6 +56,6 @@ struct PlayButton: View {
 
 #Preview {
     GeometryReader { geo in
-        PlayButton(animateViewsIn: .constant(true), geo: geo)
+        PlayButton(animateViewsIn: .constant(true), playGame: .constant(false), geo: geo)
     }
 }

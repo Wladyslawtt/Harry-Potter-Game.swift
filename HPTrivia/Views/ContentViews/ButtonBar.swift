@@ -12,6 +12,8 @@ struct ButtonBar: View {
     //בול אומר זה יהיה או טרו או פולס
     //ביינדינג לוקח משתנה מהמסך הראשי שניתן לשינוי ומשנה אותו כאן לפי הצורך
     @Binding var animateViewsIn: Bool
+    //יצרנו משתנה כבוי לכפתור משחק
+    @Binding var playGame: Bool
     //עשינו זאת כי במסך הראשי הוא נמצא בתוך גאו רידר
     let geo: GeometryProxy //יבאנו גאו פרוטוקול כדי שיתאים את הכפתור לגודל המסך
  
@@ -24,7 +26,7 @@ struct ButtonBar: View {
             
             Spacer()
             //הדולר משתמש במשתנה המקור וגאו משתמש בגאו רידר
-            PlayButton(animateViewsIn: $animateViewsIn, geo: geo)
+            PlayButton(animateViewsIn: $animateViewsIn, playGame: $playGame, geo: geo)
             
             Spacer()
             //הדולר משתמש במשתנה המקור וגאו משתמש בגאו רידר
@@ -40,6 +42,6 @@ struct ButtonBar: View {
 
 #Preview {
     GeometryReader { geo in
-        ButtonBar(animateViewsIn: .constant(true), geo: geo)
+        ButtonBar(animateViewsIn: .constant(true), playGame: .constant(false), geo: geo)
     }
 }
