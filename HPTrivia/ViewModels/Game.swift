@@ -51,12 +51,40 @@ class Game {
     
     //פונקצייה להופעת שאלה חדשה
     func newQuestion() {
-        
+        //אם כל השאלות כבר נשאלו מאלה שנמצאות באקטיבקוושן
+        if answeredQuestions.count == activeQuestions.count {
+            //מאפסים את הרשימה של השאלות שכבר נשאלו
+            answeredQuestions = []
+        }
+        //שומרים במשתנה קורנטקווסשן שאלה אקראית מהשאלות הפעילות
+        currentQuestion = activeQuestions.randomElement()!
+        //כלעוד השאלה שבחרנו כבר נשאלה לפי איידי
+        while(answeredQuestions.contains(currentQuestion.id)) {
+            //ממשיכים לבחור שאלה אקראית חדשה
+            currentQuestion = activeQuestions.randomElement()!
+        }
+        //מאפסים את רשימת התשובות
+        answers = []
+        //מוסיפים קודם את התשובה הנכונה
+        answers.append(currentQuestion.answer)
+        //עם כל תשובה מערך וורונג בשאלה הנוכחית
+        for answer in currentQuestion.wrong {
+            //יש להוסיף תשובה נוספת
+            answers.append(answer)
+        }
+        //מערבבים את סדר התשובות
+        answers.shuffle()
+        //מאפסים את הניקוד לשאלות לחמש
+        questionScore = 5
     }
     
     //פונקצייה להשלמת השאלה
     func correct() {
-        
+        //מוסיפים את האיידי של השאלה הנוכחית לרשימת שאלות שנענו
+        //כדי שלא תשאל שוב בעתיד
+        answeredQuestions.append(currentQuestion.id)
+        //מעלה את הניקוד של השחקן לפי ניקוד השאלה
+        gameScore += questionScore
     }
     
     //פונקצייה לסיום המשחק
