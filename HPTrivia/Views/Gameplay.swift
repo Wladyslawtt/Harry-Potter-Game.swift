@@ -20,6 +20,9 @@ struct Gameplay: View {
     //יבאנו משתנה לניגון קולות רקע
     @State private var sfxPlayer: AVAudioPlayer!
     
+    //הגדרנו משתנה אנימציה כבוי
+    @State private var animateViewsIn = false
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -33,8 +36,39 @@ struct Gameplay: View {
                 
                 VStack {
                     // MARK: Controls
+                    HStack {
+                        //כפתור לסיום המשחק
+                        Button("End Game") {
+                            game.endGame()
+                            dismiss()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.red.opacity(0.5))
+                        
+                        Spacer()
+                        
+                        //הנקודות במשחק
+                        Text("Score: \(game.gameScore)")
+                    }
+                    .padding()
+                    .padding(.vertical, 30)
                     
                     // MARK: Question
+                    VStack {
+                        //אם האנימציה פעילה
+                        if animateViewsIn {
+                            Text(game.currentQuestion.question)
+                                .font(.custom("PartyLetPlain", size: 50))
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .transition(.scale)
+                        }
+                    }
+                    //האנימציה עצמה
+                    .animation(.easeInOut(duration: 2), value: animateViewsIn)
+                    
+                    Spacer()
+                       
                     
                     //MARK: Hints
                     
@@ -47,15 +81,21 @@ struct Gameplay: View {
             }
             //מישר את התצוגה לפי המסך עם הגאו רידר
             .frame(width: geo.size.width, height: geo.size.height)
+            .foregroundStyle(.white)
         }
         .ignoresSafeArea()
         //ברגע ההופעה יש לנגן מוסיקה
         .onAppear{
             //הגדרנו התחלת משחק ברגע ההופעה
             game.startGame()
+            //הגדרנו שהאנימציה תבוא באיחור של כמה שניות מעכשיו
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                //הפעלנו את האנימציה
+                animateViewsIn = true
+            }
             //הגדרנו שהמוזיקה תתנגן באיחור של שתי שניות מעכשיו
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                //            playMusic()
+//                playMusic()
             }
         }
     }
