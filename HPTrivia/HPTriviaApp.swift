@@ -4,7 +4,7 @@
 //
 //  Created by Vladyslav Tarabunin on 29/06/2025.
 //
-//זו סביבת אב 
+//זו סביבת אב הסביבה הראשית
 import SwiftUI
 
 @main
