@@ -22,6 +22,8 @@ struct Gameplay: View {
     
     //הגדרנו משתנה אנימציה כבוי
     @State private var animateViewsIn = false
+    //הגדרנו משתנה שיראה לנו רמז כרגע הוא כבוי
+    @State private var revealHint = false
     
     var body: some View {
         GeometryReader { geo in
@@ -70,9 +72,71 @@ struct Gameplay: View {
                     Spacer()
                        
                     
-                    //MARK: Hints
+                    // MARK: Hints
+                    HStack{
+                        VStack {
+                            //הגדרנו אופציה לרמז
+                            if animateViewsIn {
+                                Image(systemName: "questionmark.app.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100)
+                                    .foregroundStyle(.cyan)
+                                    .padding()
+                                //מיצב את המסך לפי הגודל שלו
+                                    .transition(.offset(x: -geo.size.width/2))
+                                //הגדרנו אנימציה מתגלגלת
+                                    .phaseAnimator([false,true]) { content,phase in
+                                        content
+                                        //אם נכון הפייס יהיה מינוס אם לא נכון יהיה פלוס
+                                            .rotationEffect(.degrees(phase ? -13 : 17))
+                                        //זה הופך את האנימציה ליותר חלקה
+                                    } animation: { _ in
+                                            .easeInOut(duration: 0.7)
+                                    }
+                                //מראה בלחיצה רמז
+                                    .onTapGesture {
+                                        //צריך לשים וויז כדי שהאנימציה תפעל
+                                        //עם האנימציה הרמז מופעל
+                                        withAnimation(.easeInOut(duration: 1)) {
+                                            revealHint = true
+                                        }
+                                        //מפעיל מוזיקה בלחיצה
+                                        playFlipSound()
+                                        //זה יוריד נקודה כל פעם כשמשתמשים ברמז
+                                        game.questionScore -= 1
+                                    }
+                                //הגדרנו היפוך תלת מימד עם הופעת רמז
+                                //אם הרמז טרו הוא יתהפך אלף פעם אם פולס אז לא יתהפך
+                                    .rotation3DEffect(.degrees(revealHint ? 1440 : 0), axis: (x: 0, y: 1, z: 0))
+                                //האניצמיה בנויה על רווילהינט
+                                //הגדרנו אפקט סקייל אם כן אז חמש אם לא אז רחד
+                                    .scaleEffect(revealHint ? 5 : 1)
+                                //הגדרנו גודל אם כן אז להתאים אם גאו אם לא אז אפס
+                                    .offset(x: revealHint ? geo.size.width/2 : 0)
+                                //הגדרנו אופסיטי אם כן אז להיעלם אם לא אז תשאיר
+                                    .opacity(revealHint ? 0 : 1)
+                                    .overlay {
+                                        Text(game.currentQuestion.hint)
+                                            .padding(.leading, 20)
+                                            .minimumScaleFactor(0.5)
+                                            .multilineTextAlignment(.center)
+                                        //הגדרנו אופסיטי אם כן אז להופיע אם לא אז להעלים
+                                            .opacity(revealHint ? 1 : 0)
+                                            .scaleEffect(revealHint ? 1.33 : 1)
+                                    }
+                            }
+                        }
+                        //זו האנימציה שעוטפת את כל הרמז
+                        .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                        
+                        Spacer()
+                    }
+                    .padding()
                     
                     // MARK: Answers
+                    
+                    Spacer()
                 }
                 //מישר את התצוגה לפי המסך עם הגאו רידר
                 .frame(width: geo.size.width, height: geo.size.height)
