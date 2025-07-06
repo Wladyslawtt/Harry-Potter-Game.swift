@@ -80,7 +80,9 @@ struct Gameplay: View {
                             }
                         }
                         //האנימציה עצמה
-                        .animation(.easeInOut(duration: 2), value: animateViewsIn)
+                        //קשרנו את הזמן לאנימייט וויו אם טרו היא תחכה שתי שניות אם פולס זה יהיה מיידי
+                        //עשינו זאת כדי שתצוגה לא תגיע מהר מדי
+                        .animation(.easeInOut(duration: animateViewsIn ? 2 : 0), value: animateViewsIn)
                         
                         Spacer()
                         
@@ -141,7 +143,9 @@ struct Gameplay: View {
                                 }
                             }
                             //זו האנימציה שעוטפת את כל הרמז
-                            .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                            //קשרנו את הזמן לאנימייט וויו אם טרו היא תחכה שתי שניות אם פולס זה יהיה מיידי
+                            //עשינו זאת כדי שתצוגה לא תגיע מהר מדי
+                            .animation(.easeOut(duration: animateViewsIn ? 1.5 : 0).delay(animateViewsIn ? 2 : 0), value: animateViewsIn)
                             
                             Spacer()
                             
@@ -206,7 +210,9 @@ struct Gameplay: View {
                                 }
                             }
                             //זו האנימציה שעוטפת את כל הספר
-                            .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                            //קשרנו את הזמן לאנימייט וויו אם טרו היא אם פולס זה יהיה מיידי
+                            //עשינו זאת כדי שתצוגה לא תגיע מהר מדי
+                            .animation(.easeOut(duration: animateViewsIn ? 1.5 : 0).delay(animateViewsIn ? 2 : 0), value: animateViewsIn)
                             
                         }
                         .padding()
@@ -254,7 +260,9 @@ struct Gameplay: View {
                                         }
                                     }
                                     //אנימציה לכל המערך של הפתור הנכון
-                                    .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
+                                    //קשרנו את הזמן לאנימייט וויו אם טרו היא תחכה אם פולס זה יהיה מיידי
+                                    //עשינו זאת כדי שתצוגה לא תגיע מהר מדי
+                                    .animation(.easeOut(duration: animateViewsIn ? 1 : 0).delay(animateViewsIn ? 1.5 : 0), value: animateViewsIn)
                                 } else {
                                     //מגדירים כפתור לתשובות לא נכונות
                                     VStack {
@@ -291,7 +299,9 @@ struct Gameplay: View {
                                         }
                                     }
                                     //אנימציה לכל המערך של הפתור הלא נכון
-                                    .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
+                                    //קשרנו את הזמן לאנימייט וויו אם טרו היא תחכה אם פולס זה יהיה מיידי
+                                    //עשינו זאת כדי שתצוגה לא תגיע מהר מדי
+                                    .animation(.easeOut(duration: animateViewsIn ? 1 : 0).delay(animateViewsIn ? 1.5 : 0), value: animateViewsIn)
                                 }
                             }
                         }
@@ -332,7 +342,9 @@ struct Gameplay: View {
                                 }
                         }
                     }
-                    .animation(.easeInOut(duration: 1).delay(2), value: tappedCorrectAnswer)
+                    //קשרנו את הזמן לאנימייט וויו אם טרו היא תחכה אם פולס זה יהיה מיידי
+                    //עשינו זאת כדי שתצוגה לא תגיע מהר מדי
+                    .animation(.easeInOut(duration: animateViewsIn ? 1 : 0).delay(animateViewsIn ? 2 : 0), value: tappedCorrectAnswer)
                     
                     Spacer()
                     
@@ -345,7 +357,9 @@ struct Gameplay: View {
                                 .transition(.scale.combined(with: .offset(y: -geo.size.height/2)))
                         }
                     }
-                    .animation(.easeInOut(duration: 1).delay(1), value: tappedCorrectAnswer)
+                    //קשרנו את הזמן לטפטקורקטאנסוור אם טרו היא תחכה אם פולס זה יהיה מיידי
+                    //עשינו זאת כדי שתצוגה לא תגיע מהר מדי
+                    .animation(.easeInOut(duration: tappedCorrectAnswer ? 1 : 0).delay(tappedCorrectAnswer ? 1 : 0), value: tappedCorrectAnswer)
                     
                     Spacer()
                     
@@ -373,7 +387,20 @@ struct Gameplay: View {
                         if tappedCorrectAnswer {
                             //כפתור לשלב הבא
                             Button("Next Level>") {
-                                
+                                //הבאנו את המערכים שהגדרנו למעלה לפה כדי שידע למה להתאפס
+                                animateViewsIn = false
+                                revealHint = false
+                                revealBook = false
+                                tappedCorrectAnswer = false
+                                wrongAnswersTapped = []
+                                movePointsToScore = false
+                             
+                                game.newQuestion()
+                                //הוספנו טיימינג שלא יופיע מהר אלא שיחכה קצת ואז יופע
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    //פה הגדרנו טרו בחזרה כדי שיחזיר את ההופעה מאחר שבהתחלה זה פולס
+                                    animateViewsIn = true
+                                }
                             }
                             .font(.largeTitle)
                             .buttonStyle(.borderedProminent)
@@ -388,7 +415,9 @@ struct Gameplay: View {
                             }
                         }
                     }
-                    .animation(.easeInOut(duration: 2.7).delay(2.7), value: tappedCorrectAnswer)
+                    //קשרנו את הזמן לטפטקורקטאנסוור אם טרו היא תחכה אם פולס זה יהיה מיידי
+                    //עשינו זאת כדי שתצוגה לא תגיע מהר מדי
+                    .animation(.easeInOut(duration: tappedCorrectAnswer ? 2.7 : 0).delay(animateViewsIn ? 2.7 : 0), value: tappedCorrectAnswer)
                     
                     Spacer()
                     Spacer()
