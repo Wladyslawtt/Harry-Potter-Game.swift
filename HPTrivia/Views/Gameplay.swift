@@ -24,6 +24,8 @@ struct Gameplay: View {
     @State private var animateViewsIn = false
     //הגדרנו משתנה שיראה לנו רמז כרגע הוא כבוי
     @State private var revealHint = false
+    //הגדרנו משתנה שיראה לנו את הספר הוא כבוי
+    @State private var revealBook = false
     
     var body: some View {
         GeometryReader { geo in
@@ -89,7 +91,7 @@ struct Gameplay: View {
                                     .phaseAnimator([false,true]) { content,phase in
                                         content
                                         //אם נכון הפייס יהיה מינוס אם לא נכון יהיה פלוס
-                                            .rotationEffect(.degrees(phase ? -13 : 17))
+                                            .rotationEffect(.degrees(phase ? -13 : -17))
                                         //זה הופך את האנימציה ליותר חלקה
                                     } animation: { _ in
                                             .easeInOut(duration: 0.7)
@@ -131,10 +133,76 @@ struct Gameplay: View {
                         .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
                         
                         Spacer()
+                        
+                        VStack {
+                            //הגדרנו אופציה להופעת הספרים
+                            if animateViewsIn {
+                                Image(systemName: "app.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100)
+                                    .foregroundStyle(.cyan)
+                                    .overlay {
+                                        Image(systemName: "book.closed")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 50)
+                                            .foregroundStyle(.black)
+                                    }
+                                    .padding()
+                                //מיצב את המסך לפי הגודל שלו
+                                    .transition(.offset(x: geo.size.width/2))
+                                //הגדרנו אנימציה מתגלגלת
+                                    .phaseAnimator([false,true]) { content,phase in
+                                        content
+                                        //אם נכון הפייס יהיה מינוס אם לא נכון יהיה פלוס
+                                            .rotationEffect(.degrees(phase ? 13 : 17))
+                                        //זה הופך את האנימציה ליותר חלקה
+                                    } animation: { _ in
+                                            .easeInOut(duration: 0.7)
+                                    }
+                                //מראה בלחיצה ספר
+                                    .onTapGesture {
+                                        //צריך לשים וויז כדי שהאנימציה תפעל
+                                        //עם האנימציה הספר מופעל
+                                        withAnimation(.easeInOut(duration: 1)) {
+                                            revealBook = true
+                                        }
+                                        //מפעיל מוזיקה בלחיצה
+                                        playFlipSound()
+                                        //זה יוריד נקודה כל פעם כשמשתמשים ברמז
+                                        game.questionScore -= 1
+                                    }
+                                //הגדרנו היפוך תלת מימד עם הופעת ספר
+                                //אם הרמז טרו הוא יתהפך אלף פעם אם פולס אז לא יתהפך
+                                    .rotation3DEffect(.degrees(revealBook ? -1440 : 0), axis: (x: 0, y: 1, z: 0))
+                                //האניצמיה בנויה על רווילהינט
+                                //הגדרנו אפקט סקייל אם כן אז חמש אם לא אז רחד
+                                    .scaleEffect(revealBook ? 5 : 1)
+                                //הגדרנו גודל אם כן אז להתאים אם גאו אם לא אז אפס
+                                    .offset(x: revealBook ? -geo.size.width/2 : 0)
+                                //הגדרנו אופסיטי אם כן אז להיעלם אם לא אז תשאיר
+                                    .opacity(revealBook ? 0 : 1)
+                                    .overlay {
+                                        Image("hp\(game.currentQuestion.book)")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .padding(.trailing, 20)
+                                        //הגדרנו אופסיטי אם כן אז להופיע אם לא אז להעלים
+                                            .opacity(revealBook ? 1 : 0)
+                                            .scaleEffect(revealBook ? 1.33 : 1)
+                                    }
+                            }
+                        }
+                        //זו האנימציה שעוטפת את כל הספר
+                        .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                        
                     }
                     .padding()
                     
                     // MARK: Answers
+                    
+                    
                     
                     Spacer()
                 }
