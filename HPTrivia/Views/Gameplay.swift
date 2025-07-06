@@ -14,6 +14,10 @@ struct Gameplay: View {
     //הבאנו אובייקט ביטול מתוך הסביבה הראשית לאיחרנו במשתנה דיסמיס
     //הוא מיועד לתת לנו אפשרות לסגור את המופע או המסך
     @Environment(\.dismiss) private var dismiss
+    //זה חלק ממערך מאטשט גאמטרי אפקט שמאפשר אנימציה חלקה בין שני מצבים באותו מסך או מסכים שונים
+    //הניימ ספייס מאפשר לסנכרן אנימציות שונות על המסך
+    //הגדרנו אותו במשתנה בשם ניימספייס
+    @Namespace private var namespace
     
     //יבאנו משתנה לניגון מוזיקה במסך הזה
     @State private var musicPlayer: AVAudioPlayer!
@@ -28,6 +32,8 @@ struct Gameplay: View {
     @State private var revealBook = false
     //הגדרנו משתנה שידע מתי לחצנו על התשובה הנכונה כרגע הוא כבוי
     @State private var tappedCorrectAnswer = false
+    //הגדרנו משתנה שידע מתי לחצנו על תשובה לא נכונה על ידי איסופם
+    @State private var wrongAnswersTapped: [String] = []
     
     var body: some View {
         GeometryReader { geo in
@@ -212,24 +218,34 @@ struct Gameplay: View {
                                 VStack {
                                     //אנימציה לכפתור אם הוא פעיל
                                     if animateViewsIn {
-                                        //להפעיל את הכפתור של התשובה הנכונה
-                                        Button {
-                                            tappedCorrectAnswer = true
-                                            
-                                            playCorrectSound()
-                                            
-                                            game.correct()
-                                        } label: {
-                                            Text(answer)
-                                                .minimumScaleFactor(0.5)
-                                                .multilineTextAlignment(.center)
-                                                .padding(10)
-                                                .frame(width: geo.size.width/2.15, height: 80)
-                                                .background(.green.opacity(0.5))
-                                                .clipShape(.rect(cornerRadius: 20))
+                                        //אם לא לחצנו על הכפתור הנכון
+                                        if !tappedCorrectAnswer {
+                                            //להפעיל את הכפתור של התשובה הנכונה
+                                            Button {
+                                                //אנימציה לתשובה נכונה
+                                                withAnimation(.easeOut(duration: 1)) {
+                                                    tappedCorrectAnswer = true
+                                                }
+                                                playCorrectSound()
+                                                
+                                                game.correct()
+                                            } label: {
+                                                Text(answer)
+                                                    .minimumScaleFactor(0.5)
+                                                    .multilineTextAlignment(.center)
+                                                    .padding(10)
+                                                    .frame(width: geo.size.width/2.15, height: 80)
+                                                    .background(.green.opacity(0.5))
+                                                    .clipShape(.rect(cornerRadius: 20))
+                                                //כאן הגדרנו את הגאומטרי אפקט
+                                                //הגדרנו איידי אחד ואפשר להגדיר איזה מספר שרוצים רק שיהיה תואם לאותו איידי לאן שאנו רוצים לעשות את המעבר
+                                                //והגדרנו את האפקט עצמו שהגדרנו למעלה במערך בשם ניימ ספייס
+                                                    .matchedGeometryEffect(id: 1, in: namespace)
+                                            }
+                                            //אנימציה לכפתור
+                                            //חיבור שתי מעברים
+                                            .transition(.asymmetric(insertion: .scale, removal: .scale(scale: 15).combined(with: .opacity)))
                                         }
-                                        //אנימציה לכפתור
-                                        .transition(.scale)
                                     }
                                 }
                                 //אנימציה לכל המערך של הפתור הנכון
@@ -241,6 +257,11 @@ struct Gameplay: View {
                                     if animateViewsIn {
                                         //להפעיל את הכפתור של התשובה לא נכונה
                                         Button {
+                                            //עם אנימציה
+                                            withAnimation(.easeOut(duration: 1)) {
+                                                //זה שומר את התשובה במערך שיצרנו
+                                                wrongAnswersTapped.append(answer)
+                                            }
                                             playWrongSound()
                                             //מוריד ניקוד בעת הנקישה
                                             game.questionScore -= 1
@@ -250,11 +271,18 @@ struct Gameplay: View {
                                                 .multilineTextAlignment(.center)
                                                 .padding(10)
                                                 .frame(width: geo.size.width/2.15, height: 80)
-                                                .background(.green.opacity(0.5))
+                                            //הגדרנו שינוי צבע אם נכון יהיה ירוק אם לא יהיה אדום
+                                                .background(wrongAnswersTapped.contains(answer) ? .red.opacity(0.5) : .green.opacity(0.5))
                                                 .clipShape(.rect(cornerRadius: 20))
+                                            //הגדרנו שינוי גודל אם נכון הוא נשאר רגיל אם לא הוא קטן בשמונים אחוד
+                                                .scaleEffect(wrongAnswersTapped.contains(answer) ? 0.8 : 1)
                                         }
                                         //אנימציה לכפתור
                                         .transition(.scale)
+                                        //הוספנו רטט לתשובה שגויה
+                                        .sensoryFeedback(.error, trigger: wrongAnswersTapped)
+                                        //לא נותן ללחוץ יותר מפעם אחת על תשובה שגויה
+                                        .disabled(wrongAnswersTapped.contains(answer))
                                     }
                                 }
                                 //אנימציה לכל המערך של הפתור הלא נכון
@@ -270,6 +298,25 @@ struct Gameplay: View {
                 .frame(width: geo.size.width, height: geo.size.height)
                 
                 // MARK: Celebration Screen
+                //מסך חגיגה לתשובה נכונה
+                VStack {
+                    //אם לחצנו על התשובה הנכונה
+                    if tappedCorrectAnswer {
+                        Text(game.currentQuestion.answer)
+                            .minimumScaleFactor(0.5)
+                            .multilineTextAlignment(.center)
+                            .padding(10)
+                            .frame(width: geo.size.width/2.15, height: 80)
+                            .background(.green.opacity(0.5))
+                            .clipShape(.rect(cornerRadius: 20))
+                            .scaleEffect(2)
+                        //כאן הגדרנו את הגאומטרי אפקט
+                        //הגדרנו איידי אחד ואפשר להגדיר איזה מספר שרוצים רק שיהיה תואם לאותו איידי לאן שאנו רוצים לעשות את המעבר
+                        //והגדרנו את האפקט עצמו שהגדרנו למעלה במערך בשם ניימ ספייס
+                            .matchedGeometryEffect(id: 1, in: namespace)
+                    }
+                }
+                
             }
             //מישר את התצוגה לפי המסך עם הגאו רידר
             .frame(width: geo.size.width, height: geo.size.height)
