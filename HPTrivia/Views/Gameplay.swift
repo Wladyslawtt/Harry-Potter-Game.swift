@@ -65,241 +65,276 @@ struct Gameplay: View {
                     .padding()
                     .padding(.vertical, 30)
                     
-                    // MARK: Question
                     VStack {
-                        //אם האנימציה פעילה
-                        if animateViewsIn {
-                            Text(game.currentQuestion.question)
-                                .font(.custom("PartyLetPlain", size: 50))
-                                .multilineTextAlignment(.center)
-                                .padding()
-                                .transition(.scale)
-                        }
-                    }
-                    //האנימציה עצמה
-                    .animation(.easeInOut(duration: 2), value: animateViewsIn)
-                    
-                    Spacer()
-                       
-                    
-                    // MARK: Hints
-                    HStack{
+                        // MARK: Question
                         VStack {
-                            //הגדרנו אופציה לרמז
+                            //אם האנימציה פעילה
                             if animateViewsIn {
-                                Image(systemName: "questionmark.app.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100)
-                                    .foregroundStyle(.cyan)
+                                Text(game.currentQuestion.question)
+                                    .font(.custom("PartyLetPlain", size: 50))
+                                    .multilineTextAlignment(.center)
                                     .padding()
-                                //מיצב את המסך לפי הגודל שלו
-                                    .transition(.offset(x: -geo.size.width/2))
-                                //הגדרנו אנימציה מתגלגלת
-                                    .phaseAnimator([false,true]) { content,phase in
-                                        content
-                                        //אם נכון הפייס יהיה מינוס אם לא נכון יהיה פלוס
-                                            .rotationEffect(.degrees(phase ? -13 : -17))
-                                        //זה הופך את האנימציה ליותר חלקה
-                                    } animation: { _ in
-                                            .easeInOut(duration: 0.7)
-                                    }
-                                //מראה בלחיצה רמז
-                                    .onTapGesture {
-                                        //צריך לשים וויז כדי שהאנימציה תפעל
-                                        //עם האנימציה הרמז מופעל
-                                        withAnimation(.easeInOut(duration: 1)) {
-                                            revealHint = true
-                                        }
-                                        //מפעיל מוזיקה בלחיצה
-                                        playFlipSound()
-                                        //זה יוריד נקודה כל פעם כשמשתמשים ברמז
-                                        game.questionScore -= 1
-                                    }
-                                //הגדרנו היפוך תלת מימד עם הופעת רמז
-                                //אם הרמז טרו הוא יתהפך אלף פעם אם פולס אז לא יתהפך
-                                    .rotation3DEffect(.degrees(revealHint ? 1440 : 0), axis: (x: 0, y: 1, z: 0))
-                                //האניצמיה בנויה על רווילהינט
-                                //הגדרנו אפקט סקייל אם כן אז חמש אם לא אז רחד
-                                    .scaleEffect(revealHint ? 5 : 1)
-                                //הגדרנו גודל אם כן אז להתאים אם גאו אם לא אז אפס
-                                    .offset(x: revealHint ? geo.size.width/2 : 0)
-                                //הגדרנו אופסיטי אם כן אז להיעלם אם לא אז תשאיר
-                                    .opacity(revealHint ? 0 : 1)
-                                    .overlay {
-                                        Text(game.currentQuestion.hint)
-                                            .padding(.leading, 20)
-                                            .minimumScaleFactor(0.5)
-                                            .multilineTextAlignment(.center)
-                                        //הגדרנו אופסיטי אם כן אז להופיע אם לא אז להעלים
-                                            .opacity(revealHint ? 1 : 0)
-                                            .scaleEffect(revealHint ? 1.33 : 1)
-                                    }
+                                    .transition(.scale)
                             }
                         }
-                        //זו האנימציה שעוטפת את כל הרמז
-                        .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                        //האנימציה עצמה
+                        .animation(.easeInOut(duration: 2), value: animateViewsIn)
                         
                         Spacer()
                         
-                        VStack {
-                            //הגדרנו אופציה להופעת הספרים
-                            if animateViewsIn {
-                                Image(systemName: "app.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100)
-                                    .foregroundStyle(.cyan)
-                                    .overlay {
-                                        Image(systemName: "book.closed")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 50)
-                                            .foregroundStyle(.black)
-                                    }
-                                    .padding()
-                                //מיצב את המסך לפי הגודל שלו
-                                    .transition(.offset(x: geo.size.width/2))
-                                //הגדרנו אנימציה מתגלגלת
-                                    .phaseAnimator([false,true]) { content,phase in
-                                        content
-                                        //אם נכון הפייס יהיה מינוס אם לא נכון יהיה פלוס
-                                            .rotationEffect(.degrees(phase ? 13 : 17))
-                                        //זה הופך את האנימציה ליותר חלקה
-                                    } animation: { _ in
-                                            .easeInOut(duration: 0.7)
-                                    }
-                                //מראה בלחיצה ספר
-                                    .onTapGesture {
-                                        //צריך לשים וויז כדי שהאנימציה תפעל
-                                        //עם האנימציה הספר מופעל
-                                        withAnimation(.easeInOut(duration: 1)) {
-                                            revealBook = true
-                                        }
-                                        //מפעיל מוזיקה בלחיצה
-                                        playFlipSound()
-                                        //זה יוריד נקודה כל פעם כשמשתמשים ברמז
-                                        game.questionScore -= 1
-                                    }
-                                //הגדרנו היפוך תלת מימד עם הופעת ספר
-                                //אם הרמז טרו הוא יתהפך אלף פעם אם פולס אז לא יתהפך
-                                    .rotation3DEffect(.degrees(revealBook ? -1440 : 0), axis: (x: 0, y: 1, z: 0))
-                                //האניצמיה בנויה על רווילהינט
-                                //הגדרנו אפקט סקייל אם כן אז חמש אם לא אז רחד
-                                    .scaleEffect(revealBook ? 5 : 1)
-                                //הגדרנו גודל אם כן אז להתאים אם גאו אם לא אז אפס
-                                    .offset(x: revealBook ? -geo.size.width/2 : 0)
-                                //הגדרנו אופסיטי אם כן אז להיעלם אם לא אז תשאיר
-                                    .opacity(revealBook ? 0 : 1)
-                                    .overlay {
-                                        Image("hp\(game.currentQuestion.book)")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .padding(.trailing, 20)
-                                        //הגדרנו אופסיטי אם כן אז להופיע אם לא אז להעלים
-                                            .opacity(revealBook ? 1 : 0)
-                                            .scaleEffect(revealBook ? 1.33 : 1)
-                                    }
-                            }
-                        }
-                        //זו האנימציה שעוטפת את כל הספר
-                        .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
                         
-                    }
-                    .padding()
-                    
-                    // MARK: Answers
-                    //הגדרנו רשת עם שתי עמודות
-                    LazyVGrid(columns: [GridItem(), GridItem()]) {
-                        //תצוגה של כל התשובות לפי איידי
-                        ForEach(game.answers, id: \.self) { answer in
-                            //אם התשובה שווה לשאלה הנוכחית לתשובה אז
-                            if answer == game.currentQuestion.answer {
-                                VStack {
-                                    //אנימציה לכפתור אם הוא פעיל
-                                    if animateViewsIn {
-                                        //אם לא לחצנו על הכפתור הנכון
-                                        if !tappedCorrectAnswer {
-                                            //להפעיל את הכפתור של התשובה הנכונה
-                                            Button {
-                                                //אנימציה לתשובה נכונה
-                                                withAnimation(.easeOut(duration: 1)) {
-                                                    tappedCorrectAnswer = true
+                        // MARK: Hints
+                        HStack{
+                            VStack {
+                                //הגדרנו אופציה לרמז
+                                if animateViewsIn {
+                                    Image(systemName: "questionmark.app.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100)
+                                        .foregroundStyle(.cyan)
+                                        .padding()
+                                    //מיצב את המסך לפי הגודל שלו
+                                        .transition(.offset(x: -geo.size.width/2))
+                                    //הגדרנו אנימציה מתגלגלת
+                                        .phaseAnimator([false,true]) { content,phase in
+                                            content
+                                            //אם נכון הפייס יהיה מינוס אם לא נכון יהיה פלוס
+                                                .rotationEffect(.degrees(phase ? -13 : -17))
+                                            //זה הופך את האנימציה ליותר חלקה
+                                        } animation: { _ in
+                                                .easeInOut(duration: 0.7)
+                                        }
+                                    //מראה בלחיצה רמז
+                                        .onTapGesture {
+                                            //צריך לשים וויז כדי שהאנימציה תפעל
+                                            //עם האנימציה הרמז מופעל
+                                            withAnimation(.easeInOut(duration: 1)) {
+                                                revealHint = true
+                                            }
+                                            //מפעיל מוזיקה בלחיצה
+                                            playFlipSound()
+                                            //זה יוריד נקודה כל פעם כשמשתמשים ברמז
+                                            game.questionScore -= 1
+                                        }
+                                    //הגדרנו היפוך תלת מימד עם הופעת רמז
+                                    //אם הרמז טרו הוא יתהפך אלף פעם אם פולס אז לא יתהפך
+                                        .rotation3DEffect(.degrees(revealHint ? 1440 : 0), axis: (x: 0, y: 1, z: 0))
+                                    //האניצמיה בנויה על רווילהינט
+                                    //הגדרנו אפקט סקייל אם כן אז חמש אם לא אז רחד
+                                        .scaleEffect(revealHint ? 5 : 1)
+                                    //הגדרנו גודל אם כן אז להתאים אם גאו אם לא אז אפס
+                                        .offset(x: revealHint ? geo.size.width/2 : 0)
+                                    //הגדרנו אופסיטי אם כן אז להיעלם אם לא אז תשאיר
+                                        .opacity(revealHint ? 0 : 1)
+                                        .overlay {
+                                            Text(game.currentQuestion.hint)
+                                                .padding(.leading, 20)
+                                                .minimumScaleFactor(0.5)
+                                                .multilineTextAlignment(.center)
+                                            //הגדרנו אופסיטי אם כן אז להופיע אם לא אז להעלים
+                                                .opacity(revealHint ? 1 : 0)
+                                                .scaleEffect(revealHint ? 1.33 : 1)
+                                        }
+                                }
+                            }
+                            //זו האנימציה שעוטפת את כל הרמז
+                            .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                            
+                            Spacer()
+                            
+                            VStack {
+                                //הגדרנו אופציה להופעת הספרים
+                                if animateViewsIn {
+                                    Image(systemName: "app.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100)
+                                        .foregroundStyle(.cyan)
+                                        .overlay {
+                                            Image(systemName: "book.closed")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 50)
+                                                .foregroundStyle(.black)
+                                        }
+                                        .padding()
+                                    //מיצב את המסך לפי הגודל שלו
+                                        .transition(.offset(x: geo.size.width/2))
+                                    //הגדרנו אנימציה מתגלגלת
+                                        .phaseAnimator([false,true]) { content,phase in
+                                            content
+                                            //אם נכון הפייס יהיה מינוס אם לא נכון יהיה פלוס
+                                                .rotationEffect(.degrees(phase ? 13 : 17))
+                                            //זה הופך את האנימציה ליותר חלקה
+                                        } animation: { _ in
+                                                .easeInOut(duration: 0.7)
+                                        }
+                                    //מראה בלחיצה ספר
+                                        .onTapGesture {
+                                            //צריך לשים וויז כדי שהאנימציה תפעל
+                                            //עם האנימציה הספר מופעל
+                                            withAnimation(.easeInOut(duration: 1)) {
+                                                revealBook = true
+                                            }
+                                            //מפעיל מוזיקה בלחיצה
+                                            playFlipSound()
+                                            //זה יוריד נקודה כל פעם כשמשתמשים ברמז
+                                            game.questionScore -= 1
+                                        }
+                                    //הגדרנו היפוך תלת מימד עם הופעת ספר
+                                    //אם הרמז טרו הוא יתהפך אלף פעם אם פולס אז לא יתהפך
+                                        .rotation3DEffect(.degrees(revealBook ? -1440 : 0), axis: (x: 0, y: 1, z: 0))
+                                    //האניצמיה בנויה על רווילהינט
+                                    //הגדרנו אפקט סקייל אם כן אז חמש אם לא אז רחד
+                                        .scaleEffect(revealBook ? 5 : 1)
+                                    //הגדרנו גודל אם כן אז להתאים אם גאו אם לא אז אפס
+                                        .offset(x: revealBook ? -geo.size.width/2 : 0)
+                                    //הגדרנו אופסיטי אם כן אז להיעלם אם לא אז תשאיר
+                                        .opacity(revealBook ? 0 : 1)
+                                        .overlay {
+                                            Image("hp\(game.currentQuestion.book)")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .padding(.trailing, 20)
+                                            //הגדרנו אופסיטי אם כן אז להופיע אם לא אז להעלים
+                                                .opacity(revealBook ? 1 : 0)
+                                                .scaleEffect(revealBook ? 1.33 : 1)
+                                        }
+                                }
+                            }
+                            //זו האנימציה שעוטפת את כל הספר
+                            .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                            
+                        }
+                        .padding()
+                        
+                        // MARK: Answers
+                        //הגדרנו רשת עם שתי עמודות
+                        LazyVGrid(columns: [GridItem(), GridItem()]) {
+                            //תצוגה של כל התשובות לפי איידי
+                            ForEach(game.answers, id: \.self) { answer in
+                                //אם התשובה שווה לשאלה הנוכחית לתשובה אז
+                                if answer == game.currentQuestion.answer {
+                                    VStack {
+                                        //אנימציה לכפתור אם הוא פעיל
+                                        if animateViewsIn {
+                                            //אם לא לחצנו על הכפתור הנכון
+                                            if !tappedCorrectAnswer {
+                                                //להפעיל את הכפתור של התשובה הנכונה
+                                                Button {
+                                                    //אנימציה לתשובה נכונה
+                                                    withAnimation(.easeOut(duration: 1)) {
+                                                        tappedCorrectAnswer = true
+                                                    }
+                                                    playCorrectSound()
+                                                    
+                                                    game.correct()
+                                                } label: {
+                                                    Text(answer)
+                                                        .minimumScaleFactor(0.5)
+                                                        .multilineTextAlignment(.center)
+                                                        .padding(10)
+                                                        .frame(width: geo.size.width/2.15, height: 80)
+                                                        .background(.green.opacity(0.5))
+                                                        .clipShape(.rect(cornerRadius: 20))
+                                                    //כאן הגדרנו את הגאומטרי אפקט
+                                                    //הגדרנו איידי אחד ואפשר להגדיר איזה מספר שרוצים רק שיהיה תואם לאותו איידי לאן שאנו רוצים לעשות את המעבר
+                                                    //והגדרנו את האפקט עצמו שהגדרנו למעלה במערך בשם ניימ ספייס
+                                                        .matchedGeometryEffect(id: 1, in: namespace)
                                                 }
-                                                playCorrectSound()
-                                                
-                                                game.correct()
+                                                //אנימציה לכפתור
+                                                //חיבור שתי מעברים
+                                                .transition(.asymmetric(insertion: .scale, removal: .scale(scale: 15).combined(with: .opacity)))
+                                            }
+                                        }
+                                    }
+                                    //אנימציה לכל המערך של הפתור הנכון
+                                    .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
+                                } else {
+                                    //מגדירים כפתור לתשובות לא נכונות
+                                    VStack {
+                                        //אנימציה לכפתור אם הוא פעיל
+                                        if animateViewsIn {
+                                            //להפעיל את הכפתור של התשובה לא נכונה
+                                            Button {
+                                                //עם אנימציה
+                                                withAnimation(.easeOut(duration: 1)) {
+                                                    //זה שומר את התשובה במערך שיצרנו
+                                                    wrongAnswersTapped.append(answer)
+                                                }
+                                                playWrongSound()
+                                                //מוריד ניקוד בעת הנקישה
+                                                game.questionScore -= 1
                                             } label: {
                                                 Text(answer)
                                                     .minimumScaleFactor(0.5)
                                                     .multilineTextAlignment(.center)
                                                     .padding(10)
                                                     .frame(width: geo.size.width/2.15, height: 80)
-                                                    .background(.green.opacity(0.5))
+                                                //הגדרנו שינוי צבע אם נכון יהיה ירוק אם לא יהיה אדום
+                                                    .background(wrongAnswersTapped.contains(answer) ? .red.opacity(0.5) : .green.opacity(0.5))
                                                     .clipShape(.rect(cornerRadius: 20))
-                                                //כאן הגדרנו את הגאומטרי אפקט
-                                                //הגדרנו איידי אחד ואפשר להגדיר איזה מספר שרוצים רק שיהיה תואם לאותו איידי לאן שאנו רוצים לעשות את המעבר
-                                                //והגדרנו את האפקט עצמו שהגדרנו למעלה במערך בשם ניימ ספייס
-                                                    .matchedGeometryEffect(id: 1, in: namespace)
+                                                //הגדרנו שינוי גודל אם נכון הוא נשאר רגיל אם לא הוא קטן בשמונים אחוד
+                                                    .scaleEffect(wrongAnswersTapped.contains(answer) ? 0.8 : 1)
                                             }
                                             //אנימציה לכפתור
-                                            //חיבור שתי מעברים
-                                            .transition(.asymmetric(insertion: .scale, removal: .scale(scale: 15).combined(with: .opacity)))
+                                            .transition(.scale)
+                                            //הוספנו רטט לתשובה שגויה
+                                            .sensoryFeedback(.error, trigger: wrongAnswersTapped)
+                                            //לא נותן ללחוץ יותר מפעם אחת על תשובה שגויה
+                                            .disabled(wrongAnswersTapped.contains(answer))
                                         }
                                     }
+                                    //אנימציה לכל המערך של הפתור הלא נכון
+                                    .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
                                 }
-                                //אנימציה לכל המערך של הפתור הנכון
-                                .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
-                            } else {
-                                //מגדירים כפתור לתשובות לא נכונות
-                                VStack {
-                                    //אנימציה לכפתור אם הוא פעיל
-                                    if animateViewsIn {
-                                        //להפעיל את הכפתור של התשובה לא נכונה
-                                        Button {
-                                            //עם אנימציה
-                                            withAnimation(.easeOut(duration: 1)) {
-                                                //זה שומר את התשובה במערך שיצרנו
-                                                wrongAnswersTapped.append(answer)
-                                            }
-                                            playWrongSound()
-                                            //מוריד ניקוד בעת הנקישה
-                                            game.questionScore -= 1
-                                        } label: {
-                                            Text(answer)
-                                                .minimumScaleFactor(0.5)
-                                                .multilineTextAlignment(.center)
-                                                .padding(10)
-                                                .frame(width: geo.size.width/2.15, height: 80)
-                                            //הגדרנו שינוי צבע אם נכון יהיה ירוק אם לא יהיה אדום
-                                                .background(wrongAnswersTapped.contains(answer) ? .red.opacity(0.5) : .green.opacity(0.5))
-                                                .clipShape(.rect(cornerRadius: 20))
-                                            //הגדרנו שינוי גודל אם נכון הוא נשאר רגיל אם לא הוא קטן בשמונים אחוד
-                                                .scaleEffect(wrongAnswersTapped.contains(answer) ? 0.8 : 1)
-                                        }
-                                        //אנימציה לכפתור
-                                        .transition(.scale)
-                                        //הוספנו רטט לתשובה שגויה
-                                        .sensoryFeedback(.error, trigger: wrongAnswersTapped)
-                                        //לא נותן ללחוץ יותר מפעם אחת על תשובה שגויה
-                                        .disabled(wrongAnswersTapped.contains(answer))
-                                    }
-                                }
-                                //אנימציה לכל המערך של הפתור הלא נכון
-                                .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
                             }
                         }
+                        
+                        
+                        Spacer()
                     }
-                    
-                    
-                    Spacer()
+                    //זה משבית את כל הפתורים כשלוחצים על התשובה הנכונה
+                    .disabled(tappedCorrectAnswer)
+                    //אם התשובה נכונה הוא מתשתש בעשר אחוז אם לא אז מעלים לגמרי
+                    .opacity(tappedCorrectAnswer ? 0.1 : 1)
                 }
+                    
                 //מישר את התצוגה לפי המסך עם הגאו רידר
                 .frame(width: geo.size.width, height: geo.size.height)
                 
                 // MARK: Celebration Screen
                 //מסך חגיגה לתשובה נכונה
                 VStack {
+                    Spacer()
+                    VStack{
+                        //אם לחצת על תשובה נכונה
+                        if tappedCorrectAnswer {
+                            //הוא יראה את הניקוד הסופי
+                            Text("\(game.questionScore)")
+                                .font(.largeTitle)
+                                .padding(.top, 50)
+                                .transition(.offset(y: -geo.size.height/4))
+                        }
+                    }
+                    .animation(.easeInOut(duration: 1).delay(2), value: tappedCorrectAnswer)
+                    
+                    Spacer()
+                    
+                    VStack {
+                        //אם לחצת על תשובה נכונה
+                        if tappedCorrectAnswer {
+                            //יראה הערה כשתבחר תשובה נכונה
+                            Text("Brilliant")
+                                .font(.custom("PartyLetPlain", size: 100))
+                                .transition(.scale.combined(with: .offset(y: -geo.size.height/2)))
+                        }
+                    }
+                    .animation(.easeInOut(duration: 1).delay(1), value: tappedCorrectAnswer)
+                    
+                    Spacer()
+                    
                     //אם לחצנו על התשובה הנכונה
                     if tappedCorrectAnswer {
                         Text(game.currentQuestion.answer)
@@ -315,6 +350,27 @@ struct Gameplay: View {
                         //והגדרנו את האפקט עצמו שהגדרנו למעלה במערך בשם ניימ ספייס
                             .matchedGeometryEffect(id: 1, in: namespace)
                     }
+                    
+                    Spacer()
+                    Spacer()
+                    
+                    VStack {
+                        //אם לחצת על התשובה הנכונה
+                        if tappedCorrectAnswer {
+                            //כפתור לשלב הבא
+                            Button("Next Level>") {
+                                
+                            }
+                            .font(.largeTitle)
+                            .buttonStyle(.borderedProminent)
+                            .tint(.blue.opacity(0.5))
+                            .transition(.offset(y: geo.size.height/3))
+                        }
+                    }
+                    .animation(.easeInOut(duration: 2.7).delay(2.7), value: tappedCorrectAnswer)
+                    
+                    Spacer()
+                    Spacer()
                 }
                 
             }
