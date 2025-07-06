@@ -24,8 +24,10 @@ struct Gameplay: View {
     @State private var animateViewsIn = false
     //הגדרנו משתנה שיראה לנו רמז כרגע הוא כבוי
     @State private var revealHint = false
-    //הגדרנו משתנה שיראה לנו את הספר הוא כבוי
+    //הגדרנו משתנה שיראה לנו את הספר כרגע הוא כבוי
     @State private var revealBook = false
+    //הגדרנו משתנה שידע מתי לחצנו על התשובה הנכונה כרגע הוא כבוי
+    @State private var tappedCorrectAnswer = false
     
     var body: some View {
         GeometryReader { geo in
@@ -201,7 +203,65 @@ struct Gameplay: View {
                     .padding()
                     
                     // MARK: Answers
-                    
+                    //הגדרנו רשת עם שתי עמודות
+                    LazyVGrid(columns: [GridItem(), GridItem()]) {
+                        //תצוגה של כל התשובות לפי איידי
+                        ForEach(game.answers, id: \.self) { answer in
+                            //אם התשובה שווה לשאלה הנוכחית לתשובה אז
+                            if answer == game.currentQuestion.answer {
+                                VStack {
+                                    //אנימציה לכפתור אם הוא פעיל
+                                    if animateViewsIn {
+                                        //להפעיל את הכפתור של התשובה הנכונה
+                                        Button {
+                                            tappedCorrectAnswer = true
+                                            
+                                            playCorrectSound()
+                                            
+                                            game.correct()
+                                        } label: {
+                                            Text(answer)
+                                                .minimumScaleFactor(0.5)
+                                                .multilineTextAlignment(.center)
+                                                .padding(10)
+                                                .frame(width: geo.size.width/2.15, height: 80)
+                                                .background(.green.opacity(0.5))
+                                                .clipShape(.rect(cornerRadius: 20))
+                                        }
+                                        //אנימציה לכפתור
+                                        .transition(.scale)
+                                    }
+                                }
+                                //אנימציה לכל המערך של הפתור הנכון
+                                .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
+                            } else {
+                                //מגדירים כפתור לתשובות לא נכונות
+                                VStack {
+                                    //אנימציה לכפתור אם הוא פעיל
+                                    if animateViewsIn {
+                                        //להפעיל את הכפתור של התשובה לא נכונה
+                                        Button {
+                                            playWrongSound()
+                                            //מוריד ניקוד בעת הנקישה
+                                            game.questionScore -= 1
+                                        } label: {
+                                            Text(answer)
+                                                .minimumScaleFactor(0.5)
+                                                .multilineTextAlignment(.center)
+                                                .padding(10)
+                                                .frame(width: geo.size.width/2.15, height: 80)
+                                                .background(.green.opacity(0.5))
+                                                .clipShape(.rect(cornerRadius: 20))
+                                        }
+                                        //אנימציה לכפתור
+                                        .transition(.scale)
+                                    }
+                                }
+                                //אנימציה לכל המערך של הפתור הלא נכון
+                                .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
+                            }
+                        }
+                    }
                     
                     
                     Spacer()
