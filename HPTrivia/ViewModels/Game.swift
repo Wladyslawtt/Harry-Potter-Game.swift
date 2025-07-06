@@ -83,8 +83,11 @@ class Game {
         //מוסיפים את האיידי של השאלה הנוכחית לרשימת שאלות שנענו
         //כדי שלא תשאל שוב בעתיד
         answeredQuestions.append(currentQuestion.id)
-        //מעלה את הניקוד של השחקן לפי ניקוד השאלה
-        gameScore += questionScore
+         //עם אנימציה
+        withAnimation{
+            //מעלה את הניקוד של השחקן לפי ניקוד השאלה
+            gameScore += questionScore
+        }
     }
     
     //פונקצייה לסיום המשחק
