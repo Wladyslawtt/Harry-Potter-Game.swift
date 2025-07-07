@@ -12,6 +12,8 @@ struct SelectBooks: View {
     @Environment(\.dismiss) private var dismiss
     //השורה הזו נותנת לנו גישה לאובייקט גיים שהוגדר בסביבת אב
     @Environment(Game.self) private var game
+    //הבאנו את קובץ החנות
+    private var store = Store()
     
     //הוספנו משתנה כבוי להתרעה זמנית
     @State private var showTempAlert = false
@@ -103,6 +105,11 @@ struct SelectBooks: View {
         .interactiveDismissDisabled(!activeBooks)
         //הגדרנו התרעה בעת רכישה
         .alert("You purchased a new question pack", isPresented: $showTempAlert) {
+        }
+        //טאסק זו פעולה אוטומטית שרצה כשמופיע המסך
+        .task {
+            //פעולה איסנכרונית שטוענת מוצרים שהוגדרו בקובץ סטור
+            await store.loadProducts()
         }
     }
 }
