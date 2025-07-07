@@ -21,6 +21,12 @@ class Store {
     //ככה מקשרים את אפליקציה לאפ סטור
     private var updates: Task<Void, Never>? = nil
     
+    //פונקציה שפועלת עם פתיחת המסך מייד
+    init() {
+        //הגדרנו מאפיין עידכונים שיבדוק את העדכונים ברכישות
+        updates = watchForUpdate()
+    }
+    
     //Load available products
     func loadProducts() async {
         do {
@@ -79,6 +85,43 @@ class Store {
         }
     }
     //Chack for purchased products
+    //יצרנו פונקציה שאמורה לבדוק אם המוצר נרכש בעבר או לא
+    private func  checkPurchased() async {
+        //זה מקום לבדיקת סטטוס רכישה לכל מוצר
+        for product in products {
+            //זו פעולה אסינכרונית שבודקת עם אפל אם יש נתוני עיסקה למוצר אם יש היא שומרת בסטטוס וממשיכה לעבד את המוצר אם לא היא מדלגת עליה יעני קונטיניו
+            guard let status = await product.currentEntitlement else { continue }
+            //כאן היא בודקת את המוצר בסטטוס אם היא נרכשה בעבר או לא
+            switch status {
+            //בודק אם המידע שקיבלנו מאפ סטור לא תקינה
+            case .unverified(let signedType, let verificationError):
+                //מדווחים על שגיאה ומדלגים על הרכישה
+                print("Error on \(signedType): \(verificationError)")
+            //בודק אם הרכישה כן קיימת
+            case .verified(let signedType):
+                //אם הם רכשו איכשהו ולא החזירו או ביטלו
+                if signedType.revocationDate == nil {
+                    //יש להוסיף לאוסף הקנויים של המשתמש
+                    purchased.insert(signedType.productID)
+                //אם כן הרכישה בוטלה או הוחזרה
+                } else {
+                    //יש להסיר את המוצר מאוסף הקנויים של המשתמש
+                    purchased.remove(signedType.productID)
+                }
+            }
+        }
+    }
     
     //Connect with App Store to watch for purchase and transaction update
+    //פונקציה שמבצעת משימה שלא מחזירה שום ערך ולא נכשלת
+    private func watchForUpdate() -> Task<Void, Never> {
+        //נוצרת משימה שרצה ברקע
+        Task(priority: .background) {
+            //מחכה לעידכונים מאפ סטור אם יש רכישות חדשות ביטולים וכו
+            for await _ in Transaction.updates {
+                //בכל פעם שיש ביטול היא מריצה את הפונקציה שבודקת את המוצרים שנרכשו או התבטלו
+                await checkPurchased()
+            }
+        }
+    }
 }
