@@ -31,7 +31,16 @@ class Game {
     var currentQuestion = try! JSONDecoder().decode([Question].self, from: Data(contentsOf: Bundle.main.url(forResource: "trivia", withExtension: "json")!))[0]
     // מערך שמכיל את כל התשובות האפשריות או שנבחרו מתחיל כריק
     var answers: [String] = []
+    //המערך משיג את תקיית הקבצים בטלפון כדי שיהיה אפשר לשמור בו את כל מה שהולך ביישום
+    //הוא יוצר נתיב בשם רסנט סקורסט בתוך התקייות ולוקח את המערך הראשון בו ושומר שם את הקבצים
+    let savePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appending(path: "RecentScores")
 
+    //פונקציית איתחול שאמורה לטעון נתונים מקבצי גייסון ואייפיאיי בעת פתיחת מופע חדש
+    init() {
+        //הוא טוען את הנקודות האחרונות שנשמרו ממשחק קודם
+        loadScores()
+    }
+    
     //פונקצייה להתחיל משחק
     func startGame() {
         //עובר על כל הספרים בתוך האובייקט בוקקווסשן
@@ -98,12 +107,39 @@ class Game {
         recentScores[1] = recentScores[0]
         //הציון של המשחק הנוכחי נשמר בראש הרשימה (מקום 0)
         recentScores[0] = gameScore
+        //אנחנו שומרים את הנקודות עם הפונקציה שיצרנו
+        saveScore()
         //מאפס את הציון של המשחק
         gameScore = 0
         //מנקה את כל השאלות שהיו במשחק – איפוס לפני משחק חדש
         activeQuestions = []
         //מאפס את רשימת השאלות שנענו
         answeredQuestions = []
+    }
+    
+    //יצרנו פונקציה שאמורה לשמור את הנקודות שלנו
+    func saveScore() {
+        do {
+            //הוא לוקח את הנקודות והופך אותן לגייסון
+            let data = try JSONEncoder().encode(recentScores)
+            //הוא שומר את הגייסון בתקיית קבצים שיצרנו עם המערך סייב פת למעלה
+            try data.write(to: savePath)
+        } catch {
+            print("Unable to save data: \(error)")
+        }
+    }
+    
+    //יצרנו פונקציה שאמורה לטעון את הנקודות ששמרנו למסך הראשי בחזרה כשאנו פותחים את האפליקציה
+    func loadScores() {
+        do {
+            //יש לטעון את הדאטה מהדאטה של הקבצים ששמרנו מקודם
+            let data = try Data(contentsOf: savePath)
+            //יש לפאנח את הדאטה שהוצאנו מהדאטה שנטען
+            recentScores = try JSONDecoder().decode([Int].self, from: data)
+        } catch {
+            //הגדרנו נקודות אפס כי יכול להות להיישום נפתח פעם ראשונה ואין מה לטעון
+            recentScores = [0, 0, 0]
+        }
     }
     
     //פונקציית איתחול שאמורה לטעון נתונים מקבצי גייסון ואייפיאיי בעת פתיחת מופע חדש
@@ -116,3 +152,9 @@ class Game {
 //    } //הוספנו אותו לקוד למעלה אבל אפשר גם לעשות אותו באיניט
     
 }
+
+
+
+
+//גייסון דיקודר לוקח גייסון מוכן והופך אותו למידע שאפשר להשתמש בו בתוכנה
+//גייסון אנקודר לוקח את המידע המשומש בתוכנה והופך אותו לגייסון

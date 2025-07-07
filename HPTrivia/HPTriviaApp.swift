@@ -25,7 +25,7 @@ struct HPTriviaApp: App {
  App Development Plan:
  ✅ Game inro screen
  ✅ GamePlay screen
- 🟦 Game logic (questions, scores, etc)
+ ✅ Game logic (questions, scores, etc)
  ✅Celebration
  ✅ Audio
  ✅ Animations
@@ -33,7 +33,7 @@ struct HPTriviaApp: App {
  - Store
  ✅ Instructions screen 
  🟦 Books
- - Persist scores
+ ✅ Persist scores
  
  ✅
  */
