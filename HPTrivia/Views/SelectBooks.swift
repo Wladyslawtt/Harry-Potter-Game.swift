@@ -98,8 +98,10 @@ struct SelectBooks: View {
                         .multilineTextAlignment(.center)
                 }
                 
-                //יצרנו כפתור שיהיה אפשר לסגור את החלון
+                //יצרנו כפתור שיהיה אפשר לסגור את החלון וישמור את הספרים שבחרנו
                 Button("Done") {
+                    //הוא גם ישמור את הססטוס של הספרים שנבחר
+                    game.bookQuestions.saveStatus()
                     dismiss()
                 }
                 .font(.largeTitle)
@@ -111,8 +113,8 @@ struct SelectBooks: View {
             }
             .foregroundStyle(.black)
         }
-        //אם אין ספרים פעילים אז התצוגה לא תיסגר
-        .interactiveDismissDisabled(!activeBooks)
+        //ביטלנו סגירת מסך עם החלקה
+        .interactiveDismissDisabled()
         //הגדרנו התרעה בעת רכישה
 //        .alert("You purchased a new question pack", isPresented: $showTempAlert) {
 //        }

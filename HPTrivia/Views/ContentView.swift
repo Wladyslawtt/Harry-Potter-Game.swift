@@ -68,7 +68,7 @@ struct ContentView: View {
         //זה אומר כמה פעמים אנו רוצים הוא יתנגן מינוס אחד אומר לנצח
         audioPlayer.numberOfLoops = -1
         //השורה מבצעת את הפונקציה
-//        audioPlayer.play()
+        audioPlayer.play()
         
     }
 }

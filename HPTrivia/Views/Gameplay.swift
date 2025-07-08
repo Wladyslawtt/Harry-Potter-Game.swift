@@ -440,7 +440,7 @@ struct Gameplay: View {
             }
             //הגדרנו שהמוזיקה תתנגן באיחור של שתי שניות מעכשיו
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                playMusic()
+                playMusic()
             }
         }
     }

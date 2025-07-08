@@ -11,15 +11,15 @@ import Foundation
 class BookQuestions { //הגדרנו מחלקה של שאלות מספרים
     var books: [Book] = [] //זה מערך של כל הספרים כברירת מחדל היא הוגדרה כריקה
     
+    //המערך משיג את תקיית הקבצים בטלפון כדי שיהיה אפשר לשמור בו את כל מה שהולך ביישום
+    //הוא יוצר נתיב בשם בוק סטטוס בתוך התקייות ולוקח את המערך הראשון בו ושומר שם את הקבצים
+    let savePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appending(path: "BookStatuses")
+    
     //הקוד איניט מוגדר למחלקה ומבצע שלוש שלבים
     //הוא מתאפס כל פעם ומפעיל את כל הפעולות מחד כשיוצרים מופע חדש
     init() {
-        //מפאנח את כל השאלות מקובץ גייסון
-        let decodedQuestions = decodeQuestions()
-        //מארגן את כל השאלות לקבוצות לפי ספרים
-        let organizeQuestions = organizeQuestions(decodedQuestions)
-        //יוצר את רשימת הספרים עם השאלות מסודרות
-        populatedBooks(with: organizeQuestions)
+        //מריץ את פונקציית טעינת הסטטוס
+        loadStatus()
     }
     
     //הגדרנו פונקצייה שתפאנח את השאלות מקובץ גייסון
@@ -74,5 +74,34 @@ class BookQuestions { //הגדרנו מחלקה של שאלות מספרים
         //ניגש לספר במיקום מינוס אחד במערך ספרים ומשנה לו את הסטטוס
         //שמנו מינוס אחד כי המספר מתחיל מאפס כשהספר מתחיל באחד
         books[id-1].status = status
+    }
+    
+    //יצרנו פונקציה שאמורה לשמור את הסטטוס שלנו
+    func saveStatus() {
+        do {
+            //הוא לוקח את הספרים והופך אותן לגייסון
+            let data = try JSONEncoder().encode(books)
+            //הוא שומר את הגייסון בתקיית קבצים שיצרנו עם המערך סייב פת למעלה
+            try data.write(to: savePath)
+        } catch {
+            print("Unable to save data: \(error)")
+        }
+    }
+    
+    //יצרנו פונקציה שאמורה לטעון את הסטטוס ששמרנו למסך הראשי בחזרה כשאנו פותחים את האפליקציה
+    func loadStatus() {
+        do {
+            //יש לטעון את הדאטה מהדאטה של הקבצים ששמרנו מקודם
+            let data = try Data(contentsOf: savePath)
+            //יש לפאנח את הספרים שהוצאנו מהדאטה שנטען
+            books = try JSONDecoder().decode([Book].self, from: data)
+        } catch {
+            //מפאנח את כל השאלות מקובץ גייסון
+            let decodedQuestions = decodeQuestions()
+            //מארגן את כל השאלות לקבוצות לפי ספרים
+            let organizeQuestions = organizeQuestions(decodedQuestions)
+            //יוצר את רשימת הספרים עם השאלות מסודרות
+            populatedBooks(with: organizeQuestions)
+        }
     }
 }
