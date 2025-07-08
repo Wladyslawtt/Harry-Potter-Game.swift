@@ -16,7 +16,7 @@ struct SelectBooks: View {
     private var store = Store()
     
     //הוספנו משתנה כבוי להתרעה זמנית
-    @State private var showTempAlert = false
+//    @State private var showTempAlert = false
     
     //המטרה היא שיהיה לפחות ספר אחד פתוח לשחק בו
     //זו פונקציה שבודקת אם יש לפחות ספר אחד פעיל
@@ -50,16 +50,19 @@ struct SelectBooks: View {
                     LazyVGrid(columns: [GridItem(),GridItem()]) {
                         //כאן הגדרנו שיתאים כל ספר עם השאלות שלו למשבצת משלו
                         ForEach(game.bookQuestions.books) { book in
-                            //אם הסטטוס של כל ספר פעיל
-                            if book.status == .active {
+                            //אם הסטטוס של כל ספר פעיל או נעול ונרכש
+                            if book.status == .active || (book.status == .locked && store.purchased.contains(book.image)) {
                                 ActiveBook(book: book)
+                                    .task {//פה הוא מוודא שהכל פעיל
+                                        game.bookQuestions.changestatus(of: book.id, to: .active)
+                                    }
                                 
                                     .onTapGesture {//בזמן הלחיצה הספר משנה את הסטטוס ללא פעיל
                                         game.bookQuestions.changestatus(of: book.id, to: .inactive)
                                     }
                                 
                               //אם הסטטוס של כל ספר לא פעיל
-                            } else if book.status == .inactive {
+                            } else if book.status == .inactive  {
                                 InactiveBook(book: book)
                                 
                                     .onTapGesture {//בזמן הלחיצה הספר משנה את הסטטוס לפעיל
@@ -69,11 +72,18 @@ struct SelectBooks: View {
                               //אחר
                             } else {
                                 LockedBook(book: book)
-                                
                                     .onTapGesture {
-                                        showTempAlert.toggle()
+                                        //סגירת הרשאה ופתיחתו רק ממספר ארבע
+                                        let product = store.products[book.id-4]
+                                        
+                                        Task{//זה נותן לנו לקנות את כל הספרים ממספר ארבע והלאה
+                                            //הקניה על פי המערך פרודוקט שורה למעלה
+                                            await store.purchase(product)
+                                        }
+                                        
+//                                        showTempAlert.toggle()
                                         //בזמן הלחיצה הספר משנה את הסטטוס לפעיל
-                                        game.bookQuestions.changestatus(of: book.id, to: .active)
+//                                        game.bookQuestions.changestatus(of: book.id, to: .active)
                                 }
                             }
                         }
@@ -104,11 +114,11 @@ struct SelectBooks: View {
         //אם אין ספרים פעילים אז התצוגה לא תיסגר
         .interactiveDismissDisabled(!activeBooks)
         //הגדרנו התרעה בעת רכישה
-        .alert("You purchased a new question pack", isPresented: $showTempAlert) {
-        }
+//        .alert("You purchased a new question pack", isPresented: $showTempAlert) {
+//        }
         //טאסק זו פעולה אוטומטית שרצה כשמופיע המסך
         .task {
-            //פעולה איסנכרונית שטוענת מוצרים שהוגדרו בקובץ סטור
+            //פעולה אסינכרונית שטוענת מוצרים שהוגדרו בקובץ סטור
             await store.loadProducts()
         }
     }
