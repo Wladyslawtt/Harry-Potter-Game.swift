@@ -14,6 +14,7 @@ Audio-Visual Experience: Immerse yourself in the wizarding world with rich media
 In-App Purchases (StoreKit): Unlock additional question packs or features to enhance your quiz experience.
 
 Score Tracking: Keep track of your high scores and challenge yourself to improve.
+
 ---
 📸 Screenshots
 
@@ -28,6 +29,7 @@ Here are a few glimpses of the app in action:
 
 
 ---
+
 💻 Technologies Used
 
 Swift: The primary programming language for iOS development.
@@ -81,5 +83,7 @@ Select your desired simulator or a connected iOS device in Xcode and click the "
 📚 API Source
 
 This application utilizes data from the Harry Potter API
+
+---
 
 Embark on your magical journey and prove your knowledge of the wizarding world!
