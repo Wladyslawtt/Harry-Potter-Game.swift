@@ -4,7 +4,7 @@ A magical quiz game built with Swift, challenging your knowledge of all seven Ha
 
 ---
 ✨ Features
-
+---
 Extensive Quiz Questions: Dive deep into the lore of all seven Harry Potter books with a wide array of challenging questions.
 
 Interactive Gameplay: Engage with a user-friendly and visually appealing interface.
@@ -17,7 +17,7 @@ Score Tracking: Keep track of your high scores and challenge yourself to improve
 
 ---
 📸 Screenshots
-
+---
 Here are a few glimpses of the app in action:
 
 <p float="left">
@@ -31,7 +31,7 @@ Here are a few glimpses of the app in action:
 ---
 
 💻 Technologies Used
-
+---
 Swift: The primary programming language for iOS development.
 
 SwiftUI: For building the declarative and modern user interface.
@@ -45,7 +45,7 @@ Harry Potter API: Fetches quiz questions and related data from an external Harry
 ---
 
 🚀 Getting Started
-
+---
 To run this project locally, follow these steps:
 
 Clone the repository:
@@ -81,7 +81,7 @@ Select your desired simulator or a connected iOS device in Xcode and click the "
 ---
 
 📚 API Source
-
+---
 This application utilizes data from the Harry Potter API
 
 ---
