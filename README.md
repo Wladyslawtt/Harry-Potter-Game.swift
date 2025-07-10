@@ -26,6 +26,7 @@ Here are a few glimpses of the app in action:
 ---
 
 💻 Technologies Used
+
 Swift: The primary programming language for iOS development.
 
 SwiftUI: For building the declarative and modern user interface.
