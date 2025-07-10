@@ -4,6 +4,7 @@ A magical quiz game built with Swift, challenging your knowledge of all seven Ha
 
 ---
 ✨ Features
+
 Extensive Quiz Questions: Dive deep into the lore of all seven Harry Potter books with a wide array of challenging questions.
 
 Interactive Gameplay: Engage with a user-friendly and visually appealing interface.
@@ -15,6 +16,7 @@ In-App Purchases (StoreKit): Unlock additional question packs or features to enh
 Score Tracking: Keep track of your high scores and challenge yourself to improve.
 ---
 📸 Screenshots
+
 Here are a few glimpses of the app in action:
 
 <p float="left">
@@ -41,6 +43,7 @@ Harry Potter API: Fetches quiz questions and related data from an external Harry
 ---
 
 🚀 Getting Started
+
 To run this project locally, follow these steps:
 
 Clone the repository:
@@ -60,6 +63,7 @@ open HarryPotterQuizApp.xcodeproj
 ---
 
 Install Dependencies (if any):
+
 If you are using CocoaPods or Swift Package Manager, ensure all dependencies are installed.
 
 CocoaPods:
@@ -69,11 +73,13 @@ pod install
 Swift Package Manager: Xcode should automatically resolve packages when you open the project.
 
 Run on a Simulator or Device:
+
 Select your desired simulator or a connected iOS device in Xcode and click the "Run" button.
 
 ---
 
 📚 API Source
+
 This application utilizes data from the Harry Potter API
 
 Embark on your magical journey and prove your knowledge of the wizarding world!
