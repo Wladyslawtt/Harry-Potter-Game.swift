@@ -21,6 +21,8 @@ Here are a few glimpses of the app in action:
 <img src="https://github.com/user-attachments/assets/4fe1dda8-2b08-42da-a547-a79604da5c8f" width="200" />
 <img src="https://github.com/user-attachments/assets/ad9b2623-47ed-4ef2-a400-8a9fa7542c21" width="200" />
 </p>
+
+
 ---
 
 💻 Technologies Used
